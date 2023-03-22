@@ -1,6 +1,5 @@
 'use client';
 import { useState } from "react";
-import {addToPangoNotiList} from "@/lib/client/NotificationHandler";
 import axios from "axios";
 
 export default function SubscribeForm() {
@@ -11,7 +10,7 @@ export default function SubscribeForm() {
 
     async function subscribe(email) {
         try {
-            const response = await axios.post("/api/subscribe", {
+            const response = await axios.post("/api/spotify/subscribe", {
                 email,
             });
 
@@ -26,6 +25,7 @@ export default function SubscribeForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        e.stopPropagation();
 
         setLoading(true);
         setError(null);
