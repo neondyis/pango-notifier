@@ -10,7 +10,10 @@ const TrackSchema = new mongoose.Schema({
     name: String,
     artists: [String],
     playlistId: String,
-    externalUrl: String,
+    externalUrl: {
+        type: String,
+        unique: true
+    },
 });
 
 export default mongoose.models.Track || mongoose.model('Track', TrackSchema);
