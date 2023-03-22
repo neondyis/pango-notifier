@@ -8,12 +8,7 @@ export async function addToPangoNotiList(email) {
     try {
         const listId = "PangoNoti";
 
-        const recipientId = await courier.lists.addRecipient({
-            listId,
-            recipient: {
-                email,
-            },
-        });
+        const recipientId = await courier.lists.postSubscriptions(listId, email);
 
         console.log(`Added ${email} to list ${listId}`);
         return recipientId;
