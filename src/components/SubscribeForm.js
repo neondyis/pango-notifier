@@ -41,7 +41,7 @@ export default function SubscribeForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={'subscribe-form'}>
             <input
                 type="email"
                 placeholder="Your email"
