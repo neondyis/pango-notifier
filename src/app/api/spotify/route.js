@@ -78,7 +78,7 @@ const saveTracks = async (tracks, playlistId) => {
 
     for (const track of tracks) {
         const trackId = track.track.id;
-        const existingTrack = await Track.findOne({ trackId, playlistId });
+        const existingTrack = await Track.findOne({ trackId });
 
         if (!existingTrack) {
             const trackToSave = new Track({
@@ -115,7 +115,7 @@ export async function GET (req, res) {
     }
     //
     const tracks = playlist.tracks.items;
-    const newTracks = await saveTracks(tracks,playlistId);
+    const newTracks = await saveTracks(tracks);
 
     return NextResponse.json({ newTracks })
 }
