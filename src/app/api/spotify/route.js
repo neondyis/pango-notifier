@@ -74,45 +74,49 @@ const getPlaylist = async (token, playlistId) => {
 const saveTracks = async (tracks, playlistId) => {
     await connectToDatabase();
     const newTracks = [];
+    try {
+        for (const track of tracks) {
+            const trackId = track.track.id;
+            const existingTrack = await Track.findOne({trackId});
 
-    for (const track of tracks) {
-        const trackId = track.track.id;
-        const existingTrack = await Track.findOne({ trackId });
+            if (!existingTrack) {
+                const trackToSave = new Track({
+                    trackId,
+                    name: track.track.name,
+                    artists: track.track.artists.map((artist) => artist.name),
+                    playlistId,
+                    externalUrl: track.track.external_urls.spotify,
+                });
 
-        if (!existingTrack) {
-            const trackToSave = new Track({
-                trackId,
-                name: track.track.name,
-                artists: track.track.artists.map((artist) => artist.name),
-                playlistId,
-                externalUrl: track.track.external_urls.spotify,
-            });
-
-            await trackToSave.save();
-            newTracks.push(trackToSave);
+                await trackToSave.save();
+                newTracks.push(trackToSave);
+            }
         }
+
+    } catch (e) {
+        return Response.json({error: 'Internal Error'}, {status: 500});
     }
 
     return newTracks;
 };
 
-export async function GET (req) {
-    const { searchParams } = new URL(req.url);
+export async function GET(req) {
+    const {searchParams} = new URL(req.url);
     const playlistId = searchParams.get('playlistId');
     const token = await getToken();
 
     if (!token) {
-        return Response.json({ error: 'Failed to get access token' }, { status: 500 });
+        return Response.json({error: 'Failed to get access token'}, {status: 500});
     }
 
     const playlist = await getPlaylist(token, playlistId);
 
     if (!playlist) {
-        return Response.json({ error: 'Playlist not found' }, { status: 404 });
+        return Response.json({error: 'Playlist not found'}, {status: 404});
     }
     //
     const tracks = playlist.tracks.items;
     const newTracks = await saveTracks(tracks);
 
-    return Response.json({ newTracks }, { status: 200 });
+    return Response.json({newTracks}, {status: 200});
 }
