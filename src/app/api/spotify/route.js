@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {NextResponse} from "next/server";
 import {connectToDatabase} from "@/lib/mongodb";
 import Track from "@/models/Track";
 
@@ -97,25 +96,23 @@ const saveTracks = async (tracks, playlistId) => {
     return newTracks;
 };
 
-export async function GET (req, res) {
+export async function GET (req) {
     const { searchParams } = new URL(req.url);
     const playlistId = searchParams.get('playlistId');
     const token = await getToken();
 
     if (!token) {
-        res.status(500).json({ error: 'Failed to get access token' });
-        return;
+        return Response.json({ error: 'Failed to get access token' }, { status: 500 });
     }
 
     const playlist = await getPlaylist(token, playlistId);
 
     if (!playlist) {
-        res.status(404).json({ error: 'Playlist not found' });
-        return;
+        return Response.json({ error: 'Playlist not found' }, { status: 404 });
     }
     //
     const tracks = playlist.tracks.items;
     const newTracks = await saveTracks(tracks);
 
-    return NextResponse.json({ newTracks })
+    return Response.json({ newTracks }, { status: 200 });
 }
