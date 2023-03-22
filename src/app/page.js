@@ -19,7 +19,6 @@ export default function Home() {
             <div className="playlist-container">
                 {playlists.map((playlist) => (
                     <div key={playlist.id} className="playlist">
-                        <h2>{playlist.name}</h2>
                         <SpotifyPlayer playlistId={playlist.id} />
                     </div>
                 ))}
